@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Tài Xỉu</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    .result { margin-top: 20px; font-size: 18px; }
+    input[type="number"] { width: 100px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🎲 Game Tài Xỉu 🎲</h1>
+
+  <div>
+    <label><input type="radio" name="choice" value="tai" checked> Tài (>10)</label>
+    <label><input type="radio" name="choice" value="xiu"> Xỉu (≤10)</label>
+  </div>
+
+  <div style="margin-top: 10px;">
+    Tiền cược: <input type="number" id="bet" min="1" value="10000"> VND
+  </div>
+
+  <button onclick="play()">Chơi</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function randDice() {
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function play() {
+      const choice = document.querySelector('input[name="choice"]:checked').value;
+      const bet = parseInt(document.getElementById("bet").value);
+      if (isNaN(bet) || bet <= 0) {
+        alert("Nhập số tiền cược hợp lệ!");
+        return;
+      }
+
+      const x1 = randDice(), x2 = randDice(), x3 = randDice();
+      const sum = x1 + x2 + x3;
+      const result = sum > 10 ? "tai" : "xiu";
+      let message = `Xúc xắc: ${x1}, ${x2}, ${x3} → Tổng = ${sum}<br>`;
+      message += `Kết quả: ${result === "tai" ? "TÀI" : "XỈU"}<br>`;
+
+      if (choice === result) {
+        const win = Math.floor(bet * 2 * 0.99);
+        message += `✅ Bạn THẮNG! Nhận được: ${win} VND`;
+      } else {
+        message += `❌ Bạn THUA! Mất: ${bet} VND`;
+      }
+
+      document.getElementById("output").innerHTML = message;
+    }
+  </script>
+</body>
+</html>
