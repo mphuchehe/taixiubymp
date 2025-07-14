@@ -206,14 +206,27 @@
       if (pending) {
         showResult(pending);
         document.getElementById('side-' + pending.result).classList.add('active');
-        pending = null;
+
+        setTimeout(() => {
+          document.getElementById('resultText').innerHTML = '';
+          document.getElementById('coverPlate').classList.remove('cover-hidden');
+          document.getElementById('dice1').src = '';
+          document.getElementById('dice2').src = '';
+          document.getElementById('dice3').src = '';
+          document.getElementById('betTai').value = '';
+          document.getElementById('betXiu').value = '';
+          document.getElementById('side-tai').classList.remove('active');
+          document.getElementById('side-xiu').classList.remove('active');
+          pending = null;
+          canOpen = false;
+        }, 5000);
       }
     }
 
     function showResult({ choice, result, sum, bet }) {
       let res = `🎯 Tổng = ${sum} → ${result.toUpperCase()}`;
       if (choice === result) {
-        const winAmount = bet * 2;
+        const winAmount = Math.floor(bet * 1.98); // 1% hoa hồng nhà cái
         res += `<br><span style="color: #00ff00">🎉 Thắng +${winAmount.toLocaleString()}đ</span>`;
       } else {
         res += `<br><span style="color: #ff5555">😢 Thua</span>`;
