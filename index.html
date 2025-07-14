@@ -2,9 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>🎲 Tài Xỉu Giao Diện Thật</title>
+  <title>🎲 Tài Xỉu Chuẩn</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -51,7 +50,6 @@
       background: #ffd700;
       color: #000;
       cursor: pointer;
-      transition: 0.3s;
     }
     .side input {
       margin-top: 5px;
@@ -111,25 +109,17 @@
       pointer-events: none;
     }
     .result-win {
-      position: absolute;
-      top: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
       font-size: 20px;
       font-weight: bold;
       color: #ffffff;
-      margin-top: 10px;
-      z-index: 5;
+      margin-top: 20px;
+      min-height: 40px;
     }
     #countdown {
+      margin-top: 10px;
       font-size: 18px;
-      color: #ffffff;
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translate(-50%, 10px);
-      display: block;
-      z-index: 5;
+      color: #00ffff;
     }
   </style>
 </head>
@@ -149,8 +139,6 @@
           <img id="dice3" src="" alt="">
         </div>
         <div class="cover-plate" id="coverPlate" onclick="revealPlate()"></div>
-        <div class="result-win" id="resultText"></div>
-        <div id="countdown"></div>
       </div>
       <div class="side" id="side-xiu">
         <h2>XỈU</h2>
@@ -158,6 +146,8 @@
         <button onclick="choose('xiu')">ĐẶT CƯỢC</button>
       </div>
     </div>
+    <div id="countdown"></div>
+    <div class="result-win" id="resultText"></div>
   </div>
 
   <script>
@@ -187,14 +177,15 @@
 
       document.getElementById('coverPlate').classList.remove('cover-hidden');
       document.getElementById('resultText').innerHTML = '';
+      document.getElementById('countdown').style.display = 'block';
 
       canOpen = false;
       pending = { choice: side, result, sum, bet };
 
       let seconds = 10;
       const countdownElement = document.getElementById('countdown');
-      countdownElement.style.display = 'block';
       countdownElement.textContent = `⏳ ${seconds} giây...`;
+      clearInterval(countdownInterval);
       countdownInterval = setInterval(() => {
         seconds--;
         if (seconds >= 0) {
@@ -203,7 +194,7 @@
         if (seconds <= 0) {
           clearInterval(countdownInterval);
           canOpen = true;
-          document.getElementById('resultText').innerHTML = 'Click vào đĩa để mở kết quả';
+          document.getElementById('resultText').innerHTML = '👉 Click vào đĩa để mở kết quả';
           countdownElement.style.display = 'none';
         }
       }, 1000);
@@ -220,12 +211,12 @@
     }
 
     function showResult({ choice, result, sum, bet }) {
-      let res = `Tổng = ${sum} → ${result.toUpperCase()}`;
+      let res = `🎯 Tổng = ${sum} → ${result.toUpperCase()}`;
       if (choice === result) {
         const winAmount = bet * 2;
-        res += `<br><span style="color: #00ff00">Thắng 🎉 +${winAmount.toLocaleString()}đ</span>`;
+        res += `<br><span style="color: #00ff00">🎉 Thắng +${winAmount.toLocaleString()}đ</span>`;
       } else {
-        res += `<br><span style="color: #ff5555">Thua 😢</span>`;
+        res += `<br><span style="color: #ff5555">😢 Thua</span>`;
       }
       document.getElementById('resultText').innerHTML = res;
     }
