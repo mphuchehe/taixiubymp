@@ -2,33 +2,150 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Game Tài Xỉu</title>
+  <title>🎲 Tài Xỉu Neon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    .result { margin-top: 20px; font-size: 18px; }
-    input[type="number"] { width: 100px; }
-    button { padding: 10px 20px; margin-top: 10px; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body {
+      background: linear-gradient(120deg, #0f0c29, #302b63, #24243e);
+      color: #0ff;
+      margin: 0;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 30px;
+      color: #0ff;
+      text-shadow: 0 0 15px #0ff;
+    }
+    .game-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #0ff;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(0,255,255,0.2);
+    }
+    .choices, .bet-input {
+      margin: 20px 0;
+      font-size: 18px;
+      color: #fff;
+    }
+    input[type="radio"] {
+      margin: 0 10px;
+    }
+    input[type="number"] {
+      padding: 8px;
+      width: 100px;
+      border-radius: 8px;
+      border: 1px solid #0ff;
+      background: transparent;
+      color: #0ff;
+      text-align: center;
+    }
+    .dice {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .dice img {
+      width: 70px;
+      height: 70px;
+      filter: drop-shadow(0 0 10px #0ff);
+      transition: transform 0.3s;
+    }
+    .dice.animate img {
+      transform: rotate(360deg) scale(1.2);
+    }
+    button {
+      padding: 12px 30px;
+      font-size: 20px;
+      border-radius: 10px;
+      border: none;
+      background: #0ff;
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 0 15px #0ff;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00e6e6;
+    }
+    .result {
+      margin-top: 25px;
+      font-size: 20px;
+      color: #fff;
+    }
+    .audio-control {
+      margin-top: 15px;
+    }
+    .history {
+      margin-top: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 14px;
+      color: #ccf;
+    }
+    .history h3 {
+      margin-top: 0;
+      color: #0ff;
+      text-shadow: 0 0 5px #0ff;
+    }
+    .history-entry {
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 <body>
-  <h1>🎲 Game Tài Xỉu 🎲</h1>
-
-  <div>
-    <label><input type="radio" name="choice" value="tai" checked> Tài (>10)</label>
-    <label><input type="radio" name="choice" value="xiu"> Xỉu (≤10)</label>
+  <h1>🎲 Tài Xỉu</h1>
+  <div class="game-box">
+    <div class="choices">
+      <label><input type="radio" name="choice" value="tai" checked> Tài (>10)</label>
+      <label><input type="radio" name="choice" value="xiu"> Xỉu (≤10)</label>
+    </div>
+    <div class="bet-input">
+      Tiền cược: <input type="number" id="bet" value="10000" min="1"> VND
+    </div>
+    <div class="dice" id="diceBox">
+      <img id="dice1" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Dice-1-b.svg">
+      <img id="dice2" src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Dice-2-b.svg">
+      <img id="dice3" src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Dice-3-b.svg">
+    </div>
+    <button onclick="play()">CHƠI</button>
+    <div class="result" id="output"></div>
+    <div class="audio-control">
+      <audio id="winSound" src="https://www.fesliyanstudios.com/play-mp3/4385" preload="auto"></audio>
+      <audio id="loseSound" src="https://www.fesliyanstudios.com/play-mp3/4387" preload="auto"></audio>
+      <audio id="bgMusic" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto" loop></audio>
+    </div>
+    <div class="history">
+      <h3>Lịch sử kết quả</h3>
+      <div id="historyLog"></div>
+    </div>
   </div>
-
-  <div style="margin-top: 10px;">
-    Tiền cược: <input type="number" id="bet" min="1" value="10000"> VND
-  </div>
-
-  <button onclick="play()">Chơi</button>
-
-  <div class="result" id="output"></div>
 
   <script>
+    window.onload = () => {
+      document.getElementById("bgMusic").volume = 0.3;
+      document.getElementById("bgMusic").play();
+    };
+
     function randDice() {
       return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function getDiceImage(n) {
+      return `https://upload.wikimedia.org/wikipedia/commons/${["1b/Dice-1-b.svg","5f/Dice-2-b.svg","b1/Dice-3-b.svg","f/fd/Dice-4-b.svg","0/08/Dice-5-b.svg","2/26/Dice-6-b.svg"][n-1]}`;
     }
 
     function play() {
@@ -39,17 +156,30 @@
         return;
       }
 
+      const diceBox = document.getElementById("diceBox");
+      diceBox.classList.add("animate");
+      setTimeout(() => diceBox.classList.remove("animate"), 300);
+
       const x1 = randDice(), x2 = randDice(), x3 = randDice();
       const sum = x1 + x2 + x3;
       const result = sum > 10 ? "tai" : "xiu";
-      let message = `Xúc xắc: ${x1}, ${x2}, ${x3} → Tổng = ${sum}<br>`;
-      message += `Kết quả: ${result === "tai" ? "TÀI" : "XỈU"}<br>`;
+
+      document.getElementById("dice1").src = getDiceImage(x1);
+      document.getElementById("dice2").src = getDiceImage(x2);
+      document.getElementById("dice3").src = getDiceImage(x3);
+
+      let message = `Tổng = ${sum} → ` + (result === "tai" ? "TÀI" : "XỈU") + '<br>';
+      const log = document.getElementById("historyLog");
 
       if (choice === result) {
         const win = Math.floor(bet * 2 * 0.99);
-        message += `✅ Bạn THẮNG! Nhận được: ${win} VND`;
+        message += `<strong style='color: #00ff99'>Bạn thắng ${win.toLocaleString()} VND 🎉</strong>`;
+        document.getElementById("winSound").play();
+        log.innerHTML = `<div class='history-entry'>✅ Thắng ${win.toLocaleString()} (Tổng ${sum})</div>` + log.innerHTML;
       } else {
-        message += `❌ Bạn THUA! Mất: ${bet} VND`;
+        message += `<strong style='color: #ff7675'>Bạn thua ${bet.toLocaleString()} VND 😢</strong>`;
+        document.getElementById("loseSound").play();
+        log.innerHTML = `<div class='history-entry'>❌ Thua ${bet.toLocaleString()} (Tổng ${sum})</div>` + log.innerHTML;
       }
 
       document.getElementById("output").innerHTML = message;
